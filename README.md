@@ -1,4 +1,4 @@
-# dnnhelper
+# Deep Neural Network Helper for PyTorch
 
 Modulo helper per Deep Neural Networks (DNN) con PyTorch.
 Consente il training di reti neurali artificiali con PyTorch, a scopo didattico.
