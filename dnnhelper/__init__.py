@@ -30,6 +30,27 @@ from sklearn.model_selection import KFold
 # Dataclass Library
 from dataclasses import dataclass, field
 
+class Transforms:
+    """
+    Defines PyTorch Wrapper for Albumentations transforms for CV.
+    """
+    def __init__(self, transforms):
+        """
+        Defines transforms to apply.
+
+        Args:
+        - Transforms: the A.compose object.
+        """
+        self.transforms = transforms
+
+    def __call__(self, img, *args, **kwargs):
+        """
+        Returns the transformed image applied with Albumentations.
+
+        Args:
+        - img: the image to transform with self.transforms.
+        """
+        return self.transforms(image=np.array(img))['image']
 
 class EarlyStopping:
     """
