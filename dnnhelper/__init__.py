@@ -589,7 +589,9 @@ class Helper:
         exp.train_loss_values = exp.train_loss_values[:min_len]
         exp.val_loss_values = exp.val_loss_values[:min_len]
 
-        Helper.plot_loss(exp)
+        # Plots train loss, if available.
+        if exp.train_loss_values:
+            Helper.plot_loss(exp)
 
         print("\n")
 
