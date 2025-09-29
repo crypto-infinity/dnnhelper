@@ -921,6 +921,32 @@ class Trainer:
 
         return np.concatenate(y_pred).tolist()
 
+    @staticmethod
+    def feature_extraction(exp: Experiment, testloader):
+        """
+        Extracts features from images.
+
+        Args:
+            exp: the experiment object. Its network (exp.model)
+            must return a torch.Tensor object of shape [N, features].
+            testloader: DataLoader for the images to execute extraction.
+        Returns:
+            features: np.ndarray
+                The NumPy array of extracted features with shape (N, features),
+                where features is backnet specific (eg. with DenseNet are 2208).
+        """
+
+        exp.model.eval()
+        features = []
+
+        for _, data in enumerate(testloader, 0):
+            X = data[0].to(exp.device)
+            with torch.no_grad():
+                features.append(exp.model(X).cpu().numpy())
+
+        features = np.concatenate(features, axis=0)
+        return features
+
 
 class CrossValidation:
     """
