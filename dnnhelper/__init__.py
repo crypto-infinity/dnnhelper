@@ -808,7 +808,7 @@ class Trainer:
                 ) = Trainer._compute_classification_metrics(exp)
 
             # Print metrics
-            if verbose:
+            if verbose and compute_metrics:
                 print(
                     (
                         f"Epoch: {epoch} | "
@@ -818,6 +818,14 @@ class Trainer:
                         f"Val Precision: {epoch_val_precision} | "
                         f"Val F1: {epoch_val_f1} | "
                         f"Val Recall: {epoch_val_recall}"
+                    )
+                )
+            elif verbose:
+                print(
+                    (
+                        f"Epoch: {epoch} | "
+                        f"Train Loss: {exp.train_loss_values[-1]:.4f} | "
+                        f"Val Loss: {exp.val_loss_values[-1]:.4f} | "
                     )
                 )
 
