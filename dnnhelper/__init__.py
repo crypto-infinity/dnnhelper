@@ -699,7 +699,7 @@ class Trainer:
         return accuracy, precision, f1, recall
 
     @staticmethod
-    def fit(exp: Experiment, train_dl, val_dl, verbose=True):
+    def fit(exp: Experiment, train_dl, val_dl, compute_metrics=True, verbose=True):
         """
         Train the model for a specified number of epochs,
         computing exp.metrics.
@@ -742,11 +742,12 @@ class Trainer:
 
         for epoch in range(exp.epochs):
 
-            # Reset metrics for the next epoch
-            for i, metric in enumerate(exp.train_metrics_objects):
-                exp.train_metrics_objects[metric].reset()
-            for i, metric in enumerate(exp.val_metrics_objects):
-                exp.val_metrics_objects[metric].reset()
+            if compute_metrics:
+                # Reset metrics for the next epoch
+                for i, metric in enumerate(exp.train_metrics_objects):
+                    exp.train_metrics_objects[metric].reset()
+                for i, metric in enumerate(exp.val_metrics_objects):
+                    exp.val_metrics_objects[metric].reset()
 
             exp.model.train()
             loss_epoch = 0
@@ -760,8 +761,9 @@ class Trainer:
                 loss = exp.loss_fn(y_pred, y)
 
                 # Compute metrics
-                for i, metric in enumerate(exp.train_metrics_objects):
-                    exp.train_metrics_objects[metric].update(y_pred, y)
+                if compute_metrics:
+                    for i, metric in enumerate(exp.train_metrics_objects):
+                        exp.train_metrics_objects[metric].update(y_pred, y)
 
                 loss_epoch += loss.item()
 
@@ -787,8 +789,9 @@ class Trainer:
                     loss_val += loss.item()
 
                     # Compute metrics
-                    for i, metric in enumerate(exp.val_metrics_objects):
-                        exp.val_metrics_objects[metric].update(y_pred, y)
+                    if compute_metrics:
+                        for i, metric in enumerate(exp.val_metrics_objects):
+                            exp.val_metrics_objects[metric].update(y_pred, y)
 
             # Store loss values
             exp.train_loss_values.append(loss_epoch / len(train_dl))
@@ -796,12 +799,13 @@ class Trainer:
             exp.epoch_count.append(epoch)
 
             # Store metrics values
-            (
-                epoch_val_accuracy,
-                epoch_val_precision,
-                epoch_val_f1,
-                epoch_val_recall,
-            ) = Trainer._compute_classification_metrics(exp)
+            if compute_metrics:
+                (
+                    epoch_val_accuracy,
+                    epoch_val_precision,
+                    epoch_val_f1,
+                    epoch_val_recall,
+                ) = Trainer._compute_classification_metrics(exp)
 
             # Print metrics
             if verbose:
